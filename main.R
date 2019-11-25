@@ -21,7 +21,6 @@ df %>% select(PdDistrict) %>% group_by(PdDistrict) %>% count() %>% arrange(-n) %
   ggtitle("Number of crimes in each PdDistrct") +
   theme(plot.title = element_text(hjust = 0.3))
 
-
 #plot Top 5 crime categories in each PdDistrct
 df %>% select(Category, PdDistrict) %>% filter(PdDistrict != "") %>%
   group_by(Category, PdDistrict) %>% count() %>% arrange(PdDistrict,-n) %>% 
