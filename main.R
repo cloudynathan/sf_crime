@@ -54,3 +54,32 @@ ggmap(sf_map) +
   theme(legend.position = "none", plot.title = element_text(hjust = 0.5)) + 
   ggtitle("Bottom 10 categories of crime (minimum 100 crimes committed)")
 
+#map of Montgomery BART station
+mont_map <- get_map(location = '598 Market St, San Francisco, CA 94104', zoom = 16, color = "bw", legend = "topleft")
+ggmap(mont_map)
+
+#bottom 4 crimes (minimum 500 crimes committed)
+bottom4_crime <- df %>% select(Category, X, Y) %>% 
+  filter(Category %in% (df %>% select(Category) %>% 
+                          group_by(Category) %>% count() %>% arrange(-n) %>% 
+                          filter(n >= 500) %>%
+                          tail(4) %>% pull(Category)))
+
+#restrict top 4 crimes to Montgomery BART station
+mont_bottom4_crime <- bottom4_crime %>% filter(between(X, -122.410, -122.395) & between(Y, 37.784, 37.794))
+
+#bottom 4 crimes near Montgomery BART station (min. 500 crimes committed)
+ggmap(mont_map) + 
+  geom_point(data=mont_bottom4_crime, aes(x=X, y=Y, color=Category), size=2, alpha=1) + 
+  ggtitle("Montgomery BART Station: Least occuring crimes (min. 500 crimes)") + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+#bottom 4 crimes near Montgomery BART station seperated by category (min. 500 crimes committed)
+##Why do I get a warning message (Removed 24 rows containing missing values)? Is it because my table is a little too big for my map?
+##Is it possible to make my facet_wrap plots clearer? The non-facet_wrap version is clear.
+ggmap(mont_map) + 
+  geom_point(data=mont_bottom4_crime, aes(x=X, y=Y, color=Category), size=2, alpha=1) + 
+  facet_wrap(~ Category) +
+  ggtitle("Montgomery BART Station: Least occuring crimes (min. 500 crimes)") + 
+  theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
+        
