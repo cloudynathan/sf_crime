@@ -6,7 +6,6 @@ library(ggmap)
 
 df <- read.csv("C:/workspaceR/sf_crime/data.csv", stringsAsFactors = FALSE)
 df %>% head()
-str(df)
 
 options(scipen = 999) #disable scientific notation
 
@@ -82,4 +81,14 @@ ggmap(mont_map) +
   facet_wrap(~ Category) +
   ggtitle("Montgomery BART Station: Least occuring crimes (min. 500 crimes)") + 
   theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
+
+#plot density of burglary
+burglary <- df %>% filter(Category == "BURGLARY")
+
+ggmap(sf_map) + geom_density2d(data = burglary, aes(x=X, y=Y), bins = 30) + 
+                stat_density2d(data = burglary, aes(x=X, y=Y, fill=..level.., alpha=..level..), geom='polygon')
+
+
+
+
         
